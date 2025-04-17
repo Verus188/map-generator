@@ -91,16 +91,17 @@ map[size - 1][size - 1] = seededRandom.random(minHeight, maxHeight);
 //размер svg клетки
 let areaSize: number = 520 / size;
 
-let svgZone: HTMLElement = document.getElementById("svg-zone");
+const canvasZone: HTMLCanvasElement = document.getElementById(
+  "canvas-zone"
+) as HTMLCanvasElement;
+const canvasCtx: CanvasRenderingContext2D = canvasZone.getContext("2d");
 
 function drawMap(): void {
-  svgZone.innerHTML = "";
+  //возможно нужно добавить очистку для всего поля перед рисованием -------------------------------------------------------------------------------------
   for (let i = 0; i < size; i++) {
     for (let j = 0; j < size; j++) {
-      let area: SVGRectElement = getArea(map[i][j]);
-      area.setAttributeNS(null, "x", `${j * areaSize}`);
-      area.setAttributeNS(null, "y", `${i * areaSize}`);
-      svgZone.appendChild(area);
+      canvasCtx.fillStyle = getAreaColor(map[i][j]);
+      canvasCtx.fillRect(j * areaSize, i * areaSize, areaSize, areaSize);
     }
   }
 }
@@ -116,76 +117,50 @@ function setValueBorder(value: number, min: number, max: number): number {
   return value;
 }
 
-// возвращает объект клетки карты с цветом
+// возвращает цвет клетки
 // x - диапазон значений высоты области
 // minBr - минимальн возможная яркость
 // hsl имеет 50 едениц яркости цвета
 // k = (50 - minBr) / x
 // умножаем высоту области на n
 // искомое занчение = x * k + minBr
-function getArea(height): SVGRectElement {
-  let area: SVGRectElement = document.createElementNS(
-    "http://www.w3.org/2000/svg",
-    "rect"
-  );
-  area.setAttributeNS(null, "width", `${areaSize}`);
-  area.setAttributeNS(null, "height", `${areaSize}`);
+function getAreaColor(height): string {
   if (height <= waterLevel) {
     const minBrightness: number = 20; //чем больше это значение тем ярче будет цвет
     const colors: number = (50 - minBrightness) / waterLevel;
-    area.setAttributeNS(
-      null,
-      "fill",
-      `hsl(200, 100%, ${height * colors + minBrightness}%)`
-    );
-    return area;
+    const resColor = `hsl(200, 100%, ${height * colors + minBrightness}%)`;
+    return resColor;
   }
 
   if (height <= beachLevel) {
     const minBrightness: number = 45;
     const colors: number = (50 - minBrightness) / (beachLevel - waterLevel);
-
-    area.setAttributeNS(
-      null,
-      "fill",
-      `hsl(55, 100%, ${
-        (beachLevel - waterLevel - (height - waterLevel)) * colors +
-        minBrightness
-      }%)` //beachLevel - waterLevel для инвертации цвета
-    );
-
-    return area;
+    const resColor = `hsl(55, 100%, ${
+      (beachLevel - waterLevel - (height - waterLevel)) * colors + minBrightness
+    }%)`; //beachLevel - waterLevel для инвертации цвета
+    return resColor;
   }
 
   if (height <= forestLevel) {
     const minBrightness: number = 30;
     const colors: number = (50 - minBrightness) / (forestLevel - beachLevel);
-    area.setAttributeNS(
-      null,
-      "fill",
-      `hsl(110, 100%, ${
-        (forestLevel - beachLevel - (height - beachLevel)) * colors +
-        minBrightness
-      }%)`
-    );
-    return area;
+    const resColor = `hsl(110, 100%, ${
+      (forestLevel - beachLevel - (height - beachLevel)) * colors +
+      minBrightness
+    }%)`;
+    return resColor;
   }
 
   if (height > mountainLevel) {
     const minBrightness: number = 35;
     const colors: number = (100 - minBrightness) / (maxHeight - mountainLevel);
-    area.setAttributeNS(
-      null,
-      "fill",
-      `hsl(0, 0%, ${
-        (maxHeight - forestLevel - (maxHeight - height)) * colors +
-        minBrightness
-      }%)`
-    );
-    return area;
+    const resColor = `hsl(0, 0%, ${
+      (maxHeight - forestLevel - (maxHeight - height)) * colors + minBrightness
+    }%)`;
+    return resColor;
   } else {
-    area.setAttributeNS(null, "fill", "black");
-    return area;
+    const resColor = `black`;
+    return resColor;
   }
 }
 

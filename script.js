@@ -10,6 +10,16 @@ var beachLevel = waterLevel + 5;
 var forestLevel = beachLevel + 10;
 var mountainLevel = forestLevel;
 var map = new Array(size);
+// interface MapOptions {
+//   seed: number;
+//   sizeScale: number;
+//   size: number;
+//   minHeight: number;
+//   maxHeight: number;
+//   roughness: number;
+//   smoothness: number;
+//   map: number[][];
+// }
 //Заполнение карты высот нулями
 for (var i = 0; i < size; i++) {
     map[i] = new Array(size).fill(0);
@@ -72,15 +82,14 @@ map[size - 1][0] = seededRandom.random(minHeight, maxHeight);
 map[size - 1][size - 1] = seededRandom.random(minHeight, maxHeight);
 //размер svg клетки
 var areaSize = 520 / size;
-var svgZone = document.getElementById("svg-zone");
+var canvasZone = document.getElementById("canvas-zone");
+var canvasCtx = canvasZone.getContext("2d");
 function drawMap() {
-    svgZone.innerHTML = "";
+    //возможно нужно добавить очистку для всего поля перед рисованием -------------------------------------------------------------------------------------
     for (var i = 0; i < size; i++) {
         for (var j = 0; j < size; j++) {
-            var area = getArea(map[i][j]);
-            area.setAttributeNS(null, "x", "".concat(j * areaSize));
-            area.setAttributeNS(null, "y", "".concat(i * areaSize));
-            svgZone.appendChild(area);
+            canvasCtx.fillStyle = getAreaColor(map[i][j]);
+            canvasCtx.fillRect(j * areaSize, i * areaSize, areaSize, areaSize);
         }
     }
 }
@@ -94,48 +103,42 @@ function setValueBorder(value, min, max) {
     }
     return value;
 }
-// возвращает объект клетки карты с цветом
+// возвращает цвет клетки
 // x - диапазон значений высоты области
 // minBr - минимальн возможная яркость
 // hsl имеет 50 едениц яркости цвета
 // k = (50 - minBr) / x
 // умножаем высоту области на n
 // искомое занчение = x * k + minBr
-function getArea(height) {
-    var area = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-    area.setAttributeNS(null, "width", "".concat(areaSize));
-    area.setAttributeNS(null, "height", "".concat(areaSize));
+function getAreaColor(height) {
     if (height <= waterLevel) {
         var minBrightness = 20; //чем больше это значение тем ярче будет цвет
         var colors = (50 - minBrightness) / waterLevel;
-        area.setAttributeNS(null, "fill", "hsl(200, 100%, ".concat(height * colors + minBrightness, "%)"));
-        return area;
+        var resColor = "hsl(200, 100%, ".concat(height * colors + minBrightness, "%)");
+        return resColor;
     }
     if (height <= beachLevel) {
         var minBrightness = 45;
         var colors = (50 - minBrightness) / (beachLevel - waterLevel);
-        area.setAttributeNS(null, "fill", "hsl(55, 100%, ".concat((beachLevel - waterLevel - (height - waterLevel)) * colors +
-            minBrightness, "%)") //beachLevel - waterLevel для инвертации цвета
-        );
-        return area;
+        var resColor = "hsl(55, 100%, ".concat((beachLevel - waterLevel - (height - waterLevel)) * colors + minBrightness, "%)"); //beachLevel - waterLevel для инвертации цвета
+        return resColor;
     }
     if (height <= forestLevel) {
         var minBrightness = 30;
         var colors = (50 - minBrightness) / (forestLevel - beachLevel);
-        area.setAttributeNS(null, "fill", "hsl(110, 100%, ".concat((forestLevel - beachLevel - (height - beachLevel)) * colors +
-            minBrightness, "%)"));
-        return area;
+        var resColor = "hsl(110, 100%, ".concat((forestLevel - beachLevel - (height - beachLevel)) * colors +
+            minBrightness, "%)");
+        return resColor;
     }
     if (height > mountainLevel) {
         var minBrightness = 35;
         var colors = (100 - minBrightness) / (maxHeight - mountainLevel);
-        area.setAttributeNS(null, "fill", "hsl(0, 0%, ".concat((maxHeight - forestLevel - (maxHeight - height)) * colors +
-            minBrightness, "%)"));
-        return area;
+        var resColor = "hsl(0, 0%, ".concat((maxHeight - forestLevel - (maxHeight - height)) * colors + minBrightness, "%)");
+        return resColor;
     }
     else {
-        area.setAttributeNS(null, "fill", "black");
-        return area;
+        var resColor = "black";
+        return resColor;
     }
 }
 //находит точку вне массива
