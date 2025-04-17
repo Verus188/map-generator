@@ -13,6 +13,17 @@ const mountainLevel: number = forestLevel;
 
 let map: number[][] = new Array(size);
 
+// interface MapOptions {
+//   seed: number;
+//   sizeScale: number;
+//   size: number;
+//   minHeight: number;
+//   maxHeight: number;
+//   roughness: number;
+//   smoothness: number;
+//   map: number[][];
+// }
+
 //Заполнение карты высот нулями
 for (let i = 0; i < size; i++) {
   map[i] = new Array(size).fill(0);
@@ -68,7 +79,6 @@ function logArray(): void {
     for (let j = 0; j < size; j++) {
       res += map[i][j] + " ";
     }
-    console.log(i + ": " + res);
   }
 }
 
@@ -143,7 +153,6 @@ function getArea(height): SVGRectElement {
         minBrightness
       }%)` //beachLevel - waterLevel для инвертации цвета
     );
-    console.log(height - waterLevel);
 
     return area;
   }
@@ -317,16 +326,12 @@ let roughnessText: HTMLInputElement = document.getElementById(
 ) as HTMLInputElement;
 roughnessRange.addEventListener("input", function () {
   roughnessText.value = roughnessRange.value;
-  if (typeof roughnessRange.value === "number") {
-    roughness = roughnessRange.value;
-  }
+  roughness = Number(roughnessRange.value);
   reGenerateMap();
 });
 roughnessText.addEventListener("input", function () {
   roughnessRange.value = roughnessText.value;
-  if (typeof roughnessText.value === "number") {
-    roughness = roughnessText.value;
-  }
+  roughness = Number(roughnessRange.value);
   reGenerateMap();
 });
 
@@ -338,16 +343,12 @@ let smoothnessText: HTMLInputElement = document.getElementById(
 ) as HTMLInputElement;
 smoothnessRange.addEventListener("input", function () {
   smoothnessText.value = smoothnessRange.value;
-  if (typeof smoothnessRange.value === "number") {
-    smoothness = smoothnessRange.value;
-  }
+  smoothness = Number(smoothnessRange.value);
   reGenerateMap();
 });
 smoothnessText.addEventListener("input", function () {
   smoothnessRange.value = smoothnessText.value;
-  if (typeof smoothnessText.value === "number") {
-    smoothness = smoothnessText.value;
-  }
+  smoothness = Number(smoothnessRange.value);
   reGenerateMap();
 });
 

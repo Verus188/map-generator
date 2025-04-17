@@ -63,7 +63,6 @@ function logArray() {
         for (var j = 0; j < size; j++) {
             res += map[i][j] + " ";
         }
-        console.log(i + ": " + res);
     }
 }
 //стартовые высоты
@@ -118,7 +117,6 @@ function getArea(height) {
         area.setAttributeNS(null, "fill", "hsl(55, 100%, ".concat((beachLevel - waterLevel - (height - waterLevel)) * colors +
             minBrightness, "%)") //beachLevel - waterLevel для инвертации цвета
         );
-        console.log(height - waterLevel);
         return area;
     }
     if (height <= forestLevel) {
@@ -240,32 +238,24 @@ var roughnessRange = document.getElementById("roughness-range");
 var roughnessText = document.getElementById("roughness-text");
 roughnessRange.addEventListener("input", function () {
     roughnessText.value = roughnessRange.value;
-    if (typeof roughnessRange.value === "number") {
-        roughness = roughnessRange.value;
-    }
+    roughness = Number(roughnessRange.value);
     reGenerateMap();
 });
 roughnessText.addEventListener("input", function () {
     roughnessRange.value = roughnessText.value;
-    if (typeof roughnessText.value === "number") {
-        roughness = roughnessText.value;
-    }
+    roughness = Number(roughnessRange.value);
     reGenerateMap();
 });
 var smoothnessRange = document.getElementById("smoothness-range");
 var smoothnessText = document.getElementById("smoothness-text");
 smoothnessRange.addEventListener("input", function () {
     smoothnessText.value = smoothnessRange.value;
-    if (typeof smoothnessRange.value === "number") {
-        smoothness = smoothnessRange.value;
-    }
+    smoothness = Number(smoothnessRange.value);
     reGenerateMap();
 });
 smoothnessText.addEventListener("input", function () {
     smoothnessRange.value = smoothnessText.value;
-    if (typeof smoothnessText.value === "number") {
-        smoothness = smoothnessText.value;
-    }
+    smoothness = Number(smoothnessRange.value);
     reGenerateMap();
 });
 var randomSeedButton = document.getElementById("random-seed-b");
